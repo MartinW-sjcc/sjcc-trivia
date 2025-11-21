@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Impossible Trivia of the Day</title>
+<title>SJCC Member Trivia of the Day</title>
 
 <style>
   body {
@@ -61,7 +61,7 @@
 // ===== CONFIGURATION =====
 const FORM_URL = "https://docs.google.com/forms/d/1sEM61qfEmEz5GBjCW0SmVohOpn_gEV-KWhpF60wCbec/viewform";     // <-- replace this
 const KIOSK_URL = "https://martinw-sjcc.github.io/sjcc-trivia/";     // <-- replace this
-const RESET_TIME = 5000; // 5 seconds → change if needed
+const RESET_TIME = 45000; // 45 seconds → change if needed
 
 let resetTimer;
 
@@ -74,7 +74,7 @@ function startResetTimer() {
   }, RESET_TIME);
 }
 
-// Called when visitor clicks "Answer Now"
+// Called when visitor clicks "Answer Today's Trivia Now"
 function startTrivia() {
   document.getElementById("mainScreen").style.display = "none";
   document.getElementById("formFrame").src = FORM_URL;
@@ -122,3 +122,4 @@ window.onload = () => {
 
 </body>
 </html>
+
