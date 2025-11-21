@@ -1,32 +1,124 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="refresh" content="5; url=https://martinw-sjcc.github.io/sjcc-trivia/">
-  <!-- OPTIONAL: JS fallback -->
-  <script>
-   let resetTimer = setTimeout(() => {
-      window.location.href = "https://martinw-sjcc.github.io/sjcc-trivia/";
-    }, 5000);
-  </script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Impossible Trivia of the Day</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    text-align: center;
+  }
+
+  #container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #top {
+    padding: 20px;
+    background: #003366;
+    color: white;
+  }
+
+  #question-area {
+    padding: 20px;
+  }
+
+  #formFrame {
+    width: 100%;
+    height: 100vh; 
+    border: none;
+    display: none; /* hidden until user taps "Answer Now" */
+  }
+
+  #startButton {
+    padding: 18px 30px;
+    font-size: 22px;
+    background: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  #startButton:hover {
+    background: #005fa3;
+  }
+
+  img.qr {
+    width: 220px;
+    margin-top: 20px;
+  }
+</style>
+
+<script>
+// ===== CONFIGURATION =====
+const FORM_URL = "https://docs.google.com/forms/d/1sEM61qfEmEz5GBjCW0SmVohOpn_gEV-KWhpF60wCbec/viewform";     // <-- replace this
+const KIOSK_URL = "https://martinw-sjcc.github.io/sjcc-trivia/";     // <-- replace this
+const RESET_TIME = 5000; // 5 seconds → change if needed
+
+let resetTimer;
+
+// Start/reset the kiosk timer
+function startResetTimer() {
+  clearTimeout(resetTimer);
+  resetTimer = setTimeout(() => {
+    // Return to kiosk home screen
+    window.location.href = KIOSK_URL;
+  }, RESET_TIME);
+}
+
+// Called when visitor clicks "Answer Now"
+function startTrivia() {
+  document.getElementById("mainScreen").style.display = "none";
+  document.getElementById("formFrame").src = FORM_URL;
+  document.getElementById("formFrame").style.display = "block";
+
+  // Restart timer for the form view
+  startResetTimer();
+}
+
+window.onload = () => {
+  // Start the correction/reset timer
+  startResetTimer();
+};
+</script>
+
 </head>
-
 <body>
-  <h1>SJCC Member Trivia of the Day</h1>
-  <p><a href="https://docs.google.com/forms/d/1sEM61qfEmEz5GBjCW0SmVohOpn_gEV-KWhpF60wCbec" target="_blank">
-    Click here to answer trivia now</a></p>
 
-  <!-- QR Code image -->
-  <!img src="QpbajWLFn4bGTRY.png" />
+<div id="container">
 
-  <!-- Button to Google Form -->
+  <!-- SCREEN 1: KIOSK HOME PAGE -->
+  <div id="mainScreen">
+    <div id="top">
+      <h1>SJCC Member Trivia of the Day</h1>
+    </div>
+
+    <div id="question-area">
+    
+
+      <!-- QR CODE (optional) -->
+      <!img class="qr" src="qr.png" alt="QR Code" />
+
+      <br><br>
+
+      <!-- Start button -->
+      <button id="startButton" onclick="startTrivia()">Answer Now</button>
+
+    </div>
+  </div>
+
+  <!-- SCREEN 2: GOOGLE FORM INSIDE IFRAME -->
+  <iframe id="formFrame"></iframe>
+
+</div>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
