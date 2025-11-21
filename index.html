@@ -60,6 +60,30 @@
     background: #005fa3;
   }
 
+ .btn-small {
+    display: inline-block;
+    padding: 12px 25px;
+    margin-top: 15px;
+    background: #005A9C;
+    color: white;
+    font-size: 18px;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+
+  #resultsPanel {
+    display: none;
+    margin-top: 30px;
+  }
+
+  #resultsPanel iframe {
+    width: 95%;
+    height: 350px;
+    border: none;
+    border-radius: 10px;
+  }
+
+  
   img.qr {
     width: 220px;
     margin-top: 20px;
@@ -70,6 +94,7 @@
 // ===== CONFIGURATION =====
 const FORM_URL = "https://docs.google.com/forms/d/1sEM61qfEmEz5GBjCW0SmVohOpn_gEV-KWhpF60wCbec/viewform";     // <-- replace this
 const KIOSK_URL = "https://martinw-sjcc.github.io/sjcc-trivia/";     // <-- replace this
+const RESULTS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSsuXBXwKN1wxzB78a6DOJJFZFYuGk1iH7GviRi1ruhHed8NnP-7EZhRM6BSB20vv3e8YQZdceI-Az4/pubchart?oid=1598696723&amp;format=interactive";
 const RESET_TIME = 45000; // 45 seconds → change if needed
 
 let resetTimer;
@@ -97,6 +122,28 @@ window.onload = () => {
   // Start the correction/reset timer
   startResetTimer();
 };
+
+  // Handle Results Button
+document.getElementById("resultsBtn").onclick = () => {
+  showResultsPanel();
+};
+
+function showResultsPanel() {
+  const panel = document.getElementById("resultsPanel");
+  const frame = document.getElementById("resultsFrame");
+
+  frame.src = RESULTS_URL;
+  panel.style.display = "block";
+
+  // Close after 30 seconds
+  clearTimeout(answerTimeout);
+  answerTimeout = setTimeout(() => {
+    panel.style.display = "none";
+    frame.src = "";
+  }, 30000);
+}
+
+  
 </script>
 
 </head>
@@ -124,6 +171,15 @@ window.onload = () => {
       <!-- Start button -->
       <button id="startButton" onclick="startTrivia()">Answer Today's Trivia Now</button>
 
+ <!-- View Results Button -->
+  <a id="resultsBtn" class="btn-small">View Today’s Results</a>
+
+  <!-- Auto-Hiding Results Panel -->
+  <div id="resultsPanel">
+    <iframe id="resultsFrame" src=""></iframe>
+    <p style="font-size:14px;color:#555;margin-top:10px;">This panel will close automatically.</p>
+  </div>
+      
     </div>
   </div>
 
@@ -134,6 +190,7 @@ window.onload = () => {
 
 </body>
 </html>
+
 
 
 
