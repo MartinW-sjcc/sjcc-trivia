@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Trivia Kiosk</title>
+<style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+  }
+  iframe {
+    border: none;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script>
+// URL of the form start page
+const FORM_URL = "https://docs.google.com/forms/d/1sEM61qfEmEz5GBjCW0SmVohOpn_gEV-KWhpF60wCbec/viewform";
+
+function monitorForm() {
+  const iframe = document.getElementById("formFrame");
+
+  setInterval(() => {
+    let doc;
+
+    try {
+      doc = iframe.contentDocument || iframe.contentWindow.document;
+    } catch (e) {
+      doc = null;
+    }
+
+    if (doc) {
+      const isDone =
+        doc.body.innerText.includes("Your response has been recorded") ||
+        doc.body.innerText.includes("Thanks for responding");
+
+      if (isDone) {
+        setTimeout(() => {
+          iframe.src = FORM_URL;
+        }, 60000); // 60 seconds
+      }
+    }
+
+  }, 2000);
+}
+
+window.onload = monitorForm;
+</script>
+
+</head>
+<body>
+  <iframe id="formFrame" src="https://docs.google.com/forms/d/1sEM61qfEmEz5GBjCW0SmVohOpn_gEV-KWhpF60wCbec/viewform"></iframe>
+</body>
+</html>
+
+
