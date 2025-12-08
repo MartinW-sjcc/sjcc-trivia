@@ -28,19 +28,22 @@
 
   #question-area {
     padding: 20px;
-  }
 
   .logo {
-    width: 300px;      
-    max-width: 80%;    
-    margin-bottom: 20px;
+  width: 300px;      /* adjust size here */
+  max-width: 80%;    /* keeps it responsive */
+  margin-bottom: 20px;
+}
+
+/>
+
   }
 
   #formFrame {
     width: 100%;
     height: 100vh; 
     border: none;
-    display: none;
+    display: none; /* hidden until user taps "Answer Now" */
   }
 
   #startButton {
@@ -57,7 +60,7 @@
     background: #005fa3;
   }
 
-  .btn-small {
+ .btn-small {
     display: inline-block;
     padding: 12px 25px;
     margin-top: 15px;
@@ -66,7 +69,6 @@
     font-size: 18px;
     border-radius: 8px;
     text-decoration: none;
-    cursor: pointer;
   }
 
   #resultsPanel {
@@ -81,6 +83,7 @@
     border-radius: 10px;
   }
 
+  
   img.qr {
     width: 220px;
     margin-top: 20px;
@@ -89,60 +92,58 @@
 
 <script>
 // ===== CONFIGURATION =====
-const FORM_URL = "https://docs.google.com/forms/d/1sEM61qfEmEz5GBjCW0SmVohOpn_gEV-KWhpF60wCbec/viewform";
-const KIOSK_URL = "https://martinw-sjcc.github.io/sjcc-trivia/";
+const FORM_URL = "https://docs.google.com/forms/d/1sEM61qfEmEz5GBjCW0SmVohOpn_gEV-KWhpF60wCbec/viewform";     // <-- replace this
+const KIOSK_URL = "https://martinw-sjcc.github.io/sjcc-trivia/";     // <-- replace this
+const RESULTS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSsuXBXwKN1wxzB78a6DOJJFZFYuGk1iH7GviRi1ruhHed8NnP-7EZhRM6BSB20vv3e8YQZdceI-Az4/pubchart?oid=768898762&format=interactive";
+const RESET_TIME = 35000; // 35 seconds → change if needed
 
-const RESULTS_URL_TODAY = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSsuXBXwKN1wxzB78a6DOJJFZFYuGk1iH7GviRi1ruhHed8NnP-7EZhRM6BSB20vv3e8YQZdceI-Az4/pubchart?oid=768898762&format=interactive";
+let resetTimer;
 
-// Use your published Summaries sheet URL here:
-const SUMMARIES_BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSsuXBXwKN1wxzB78a6DOJJFZFYuGk1iH7GviRi1ruhHed8NnP-7EZhRM6BSB20vv3e8YQZdceI-Az4/pubhtml?gid=313092836&single=true";
-
-const RESET_TIME = 35000; // 35 seconds
-
-let resetTimer, resultsTimer;
-
+// Start/reset the kiosk timer
 function startResetTimer() {
   clearTimeout(resetTimer);
   resetTimer = setTimeout(() => {
+    // Return to kiosk home screen
     window.location.href = KIOSK_URL;
   }, RESET_TIME);
 }
 
+// Called when visitor clicks "Answer Today's Trivia Now"
 function startTrivia() {
   document.getElementById("mainScreen").style.display = "none";
   document.getElementById("formFrame").src = FORM_URL;
   document.getElementById("formFrame").style.display = "block";
+
+  // Restart timer for the form view
   startResetTimer();
 }
 
-window.onload = startResetTimer;
+window.onload = () => {
+  // Start the correction/reset timer
+  startResetTimer();
+};
 
-function showResultsPanel(url) {
+  // Handle Results Button
+document.getElementById("resultsBtn").onclick = () => {
+  showResultsPanel();
+};
+
+function showResultsPanel() {
   const panel = document.getElementById("resultsPanel");
   const frame = document.getElementById("resultsFrame");
 
-  frame.src = url;
+  frame.src = RESULTS_URL;
   panel.style.display = "block";
 
-  clearTimeout(resultsTimer);
-  resultsTimer = setTimeout(() => {
+  // Close after 30 seconds
+  clearTimeout(answerTimeout);
+  answerTimeout = setTimeout(() => {
     panel.style.display = "none";
     frame.src = "";
   }, 30000);
 }
 
-function showTodayResults() {
-  showResultsPanel(RESULTS_URL_TODAY);
-}
-
-function showYesterdayResults() {
-  const today = new Date();
-  const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-  const yStr = yesterday.toISOString().split("T")[0];
-
-  const url = SUMMARIES_BASE_URL + "#gid=313092836&range=find:" + encodeURIComponent("Summary for " + yStr);
-  showResultsPanel(url);
-}
+  
 </script>
 
 </head>
@@ -150,35 +151,52 @@ function showYesterdayResults() {
 
 <div id="container">
 
+  <!-- SCREEN 1: KIOSK HOME PAGE -->
   <div id="mainScreen">
     <div id="top">
       <h1>SJCC Member Trivia of the Day</h1>
     </div>
 
     <div id="question-area">
-      <img class="logo" src="251104-website-homepage-header-1180x180-1.jpg" alt="SJCC Logo" />
+    
 
+      <!-- QR CODE (optional) -->
+      <!img class="qr" src="qr.png" alt="QR Code" />
+<img 
+  class="logo" 
+  src="251104-website-homepage-header-1180x180-1.jpg" 
+  alt="SJCC Logo" />
       <br><br>
 
+      <!-- Start button -->
       <button id="startButton" onclick="startTrivia()">Answer Today's Trivia Now</button>
 
       <br><br><br>
+ <!-- View Results Button -->
+  <a id="resultsBtn" class="btn-small" onclick="showResultsPanel()">View Today’s Results</a>
 
-      <!-- VIEW RESULTS buttons -->
-      <a id="resultsBtn" class="btn-small" onclick="showTodayResults()">View Today’s Results</a>
-      <a id="yesterdayBtn" class="btn-small" onclick="showYesterdayResults()">View Yesterday’s Results</a>
-
-      <div id="resultsPanel">
-        <iframe id="resultsFrame" src=""></iframe>
-        <p style="font-size:14px;color:#555;margin-top:10px;">
-          This panel will close automatically.
-        </p>
-      </div>
+  <!-- Auto-Hiding Results Panel -->
+  <div id="resultsPanel">
+    <iframe id="resultsFrame" src=""></iframe>
+    <p style="font-size:14px;color:#555;margin-top:10px;">This panel will close automatically.</p>
+  </div>
+      
     </div>
   </div>
 
+  <!-- SCREEN 2: GOOGLE FORM INSIDE IFRAME -->
   <iframe id="formFrame"></iframe>
+
 </div>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
